@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:whatsapp/screens/calls_screen.dart';
+import 'package:whatsapp/screens/chats_screen.dart';
+import 'package:whatsapp/screens/contacts_screen.dart';
+import 'helpers/colors.dart';
+import 'screens/camera_screen.dart';
+import 'screens/status_screen.dart';
+import 'widgets/tabs.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(MyApp());
 }
 
@@ -10,11 +19,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Whatsapp',
       theme: ThemeData(
-          primarySwatch: MyColors.whatsapp,
-          floatingActionButtonTheme: FloatingActionButtonThemeData(
-              backgroundColor: MyColors.whatsapp[300])),
-      home: Home(),
+        primarySwatch: MyColors.whatsapp,
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+            backgroundColor: MyColors.whatsapp[300]),
+      ),
       debugShowCheckedModeBanner: false,
+      home: Home(),
+      routes: {
+        ContactsScreen.routeName: (ctx) => ContactsScreen(),
+      },
     );
   }
 }
@@ -24,120 +37,85 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class _HomeState extends State<Home> with TickerProviderStateMixin {
   late final TabController _tabController;
+  int _tabIdx = 1;
+  late final AnimationController animeController;
+  Animation<Size>? _heightAnimation;
+  List<FloatingActionButton?> fabs = [
+    null,
+    FloatingActionButton(onPressed: () {}, child: Icon(Icons.chat)),
+    FloatingActionButton(onPressed: () {}, child: Icon(Icons.camera_alt)),
+    FloatingActionButton(onPressed: () {}, child: Icon(Icons.call)),
+  ];
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
-    _tabController.index = 1;
+    _tabController = TabController(length: 4, vsync: this, initialIndex: 1);
+    _tabController.addListener(updateScreenForFab);
+
+    animeController = AnimationController(
+      vsync: this,
+      duration: Duration(
+        milliseconds: 300,
+      ),
+    );
+    _heightAnimation = Tween<Size>(
+            begin: Size(double.infinity, 112), end: Size(double.infinity, 0))
+        .animate(
+      CurvedAnimation(
+        parent: animeController,
+        curve: Curves.fastOutSlowIn,
+      ),
+    );
+  }
+
+  void updateScreenForFab() {
+    setState(() {
+      _tabIdx = _tabController.index;
+    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    animeController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-
-    double yourWidth = width / 5;
     return Scaffold(
-      appBar: AppBar(
-          title: Text("Whatsapp"),
-          actions: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.search)),
-            IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))
-          ],
-          bottom: TabBar(
-            controller: _tabController,
-            isScrollable: true,
-            tabs: [
-              Container(
-                width: 30,
-                height: 50,
-                alignment: Alignment.center,
-                child: Icon(
-                  Icons.camera_alt,
+        body: NestedScrollView(
+          headerSliverBuilder: (ctx, isInnerBoxScrolled) {
+            return [
+              SliverAppBar(
+                // toolbarHeight: _heightAnimation!.value.height,
+                title: Text("Whatsapp"),
+                pinned: true,
+                floating: true,
+                actions: [
+                  IconButton(onPressed: () {}, icon: Icon(Icons.search)),
+                  IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))
+                ],
+                bottom: TabBar(
+                  controller: _tabController,
+                  isScrollable: true,
+                  tabs: Tabs.build(context),
                 ),
               ),
-              Container(
-                  width: yourWidth,
-                  height: 50,
-                  alignment: Alignment.center,
-                  child: Text("CHATS")),
-              Container(
-                  width: yourWidth,
-                  height: 50,
-                  alignment: Alignment.center,
-                  child: Text("STATUS")),
-              Container(
-                  width: yourWidth,
-                  height: 50,
-                  alignment: Alignment.center,
-                  child: Text("CALL"))
+            ];
+          },
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              CameraScreen(),
+              ChatsScreen(),
+              StatusScreen(),
+              CallsScreen()
             ],
-          )),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          Text("camera"),
-          ListView.builder(
-              itemCount: 20,
-              itemBuilder: (ctx, idx) => InkWell(
-                    onTap: () {},
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.account_circle,
-                        size: 60,
-                        color: MyColors.whatsapp[100],
-                      ),
-                      title: Text("Name"),
-                      subtitle: Row(
-                        children: [
-                          Icon(
-                            Icons.done_all,
-                            size: 17,
-                            color: MyColors.whatsapp[600],
-                          ),
-                          SizedBox(width: 5),
-                          Text("last massege"),
-                        ],
-                      ),
-                      trailing: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text("03/08/21"),
-                        ],
-                      ),
-                    ),
-                  )),
-          Text("hi"),
-          Text("hello 2")
-        ],
-      ),
-      floatingActionButton:
-          FloatingActionButton(onPressed: () {}, child: Icon(Icons.chat)),
-    );
+          ),
+        ),
+        floatingActionButton: fabs[_tabIdx]);
   }
-}
-
-class MyColors {
-  static const MaterialColor whatsapp = MaterialColor(
-    0xFF075e54,
-    <int, Color>{
-      50: Color(0xFF162A49),
-      100: Color(0xFFDEE5E9),
-      200: Color(0xFFdcf8c6),
-      300: Color(0xFF25d366), // button
-      400: Color(0xFF128c7e),
-      500: Color(0xFF075e54), // appbar
-      600: Color(0xFF34b7f1), // read tik icon
-      700: Color(0xFFece5dd),
-      800: Color(0xFF162A49),
-      900: Color(0xFF162A49),
-    },
-  );
 }
