@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:whatsapp/widgets/call_item.dart';
 
 class CallsScreen extends StatelessWidget {
   const CallsScreen({Key? key}) : super(key: key);
@@ -6,7 +7,9 @@ class CallsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text("CALLS"),
+      child: ListView(
+          padding: EdgeInsets.symmetric(vertical: 0),
+          children: List.generate(10, (index) => CallItem())),
     );
   }
 }
