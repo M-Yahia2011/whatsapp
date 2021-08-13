@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+// import 'package:whatsapp/screens/save_camera_screen.dart';
+import 'package:path_provider/path_provider.dart' as pathProvider;
 
 class CameraScreen extends StatefulWidget {
   @override
@@ -9,9 +13,8 @@ class CameraScreen extends StatefulWidget {
 class _CameraScreenState extends State<CameraScreen> {
   List<CameraDescription>? cameras;
   CameraController? controller;
-  // ignore: unused_field
-  late List _galleryImages;
-
+  XFile? capturedImage;
+  
   Future<void> initializeCamera() async {
     cameras = await availableCameras();
     controller = CameraController(
@@ -27,16 +30,18 @@ class _CameraScreenState extends State<CameraScreen> {
     });
   }
 
-  Future<void> getGalleryImages() async {
-    // await GalleryRetriever.getAllImages
-    //     .then((value) => _galleryImages = value as List);
+  Future<List<String>?> getGalleryImages() async {
+  }
+
+  Future<void> startCamera() async {
+    await initializeCamera();
+    // await getGalleryImages();
   }
 
   @override
   void initState() {
     super.initState();
-    initializeCamera();
-    getGalleryImages();
+    startCamera();
   }
 
   @override
@@ -45,24 +50,52 @@ class _CameraScreenState extends State<CameraScreen> {
     super.dispose();
   }
 
+  Future<void> takePhoto() async {
+    try {
+      controller?.takePicture().then((file) => capturedImage = file);
+      // Navigator.of(context).pushNamed(SaveCameraScreen.routeName,arguments: {capturedImage});
+      if (capturedImage != null) {
+        await save(capturedImage);
+      }
+    } catch (e) {}
+  }
+
+  /// save on the save screen
+  Future<void> save(XFile? file) async {
+    Directory? externalMemory =
+        await pathProvider.getExternalStorageDirectory();
+    await file?.saveTo("${externalMemory!.path}.jpg");
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (controller == null || !controller!.value.isInitialized) {
-      return Container(
-        height: 0,
-        width: 0,
-      );
-    }
-    return Stack(fit: StackFit.expand, children: [
-      CameraPreview(controller!),
-      GallerySection(),
-      CameraBottomSection()
-    ]);
+    return Builder(
+        // future: ,
+        builder: (_) {
+      if (controller == null || !controller!.value.isInitialized) {
+        return Center(child: CircularProgressIndicator());
+      } else {
+        return Stack(fit: StackFit.expand, children: [
+          CameraPreview(controller!),
+          GallerySection(),
+          CameraBottonsSection(takePhoto),
+        ]);
+      }
+    });
   }
 }
 
-class CameraBottomSection extends StatelessWidget {
-  const CameraBottomSection({Key? key}) : super(key: key);
+class CameraBottonsSection extends StatefulWidget {
+  final Function handleFunction;
+
+  CameraBottonsSection(this.handleFunction);
+
+  @override
+  _CameraBottonsSectionState createState() => _CameraBottonsSectionState();
+}
+
+class _CameraBottonsSectionState extends State<CameraBottonsSection> {
+  bool buttonPressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -74,12 +107,21 @@ class CameraBottomSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Icon(Icons.flash_on, color: Colors.white, size: 30),
-            Container(
-              height: 80,
-              width: 80,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 2),
-                borderRadius: BorderRadius.circular(50),
+            GestureDetector(
+              onTap: () {
+                buttonPressed = true;
+
+                widget.handleFunction();
+                buttonPressed = false;
+              },
+              child: Container(
+                height: 80,
+                width: 80,
+                decoration: BoxDecoration(
+                  color: buttonPressed ? Colors.red : null,
+                  border: Border.all(color: Colors.white, width: 2),
+                  borderRadius: BorderRadius.circular(50),
+                ),
               ),
             ),
             Icon(Icons.camera_alt, color: Colors.white, size: 30)
@@ -91,7 +133,7 @@ class CameraBottomSection extends StatelessWidget {
 }
 
 class GallerySection extends StatelessWidget {
-  // final List _galleryImages;
+  // final List<String> _galleryImages;
   // GallerySection(this._galleryImages);
 
   @override
@@ -103,7 +145,7 @@ class GallerySection extends StatelessWidget {
       child: Container(
         height: 55,
         child: ListView.builder(
-            itemCount: 20,
+            itemCount: 30,
             scrollDirection: Axis.horizontal,
             itemBuilder: (ctx, idx) {
               return Container(
@@ -111,7 +153,8 @@ class GallerySection extends StatelessWidget {
                 width: 55,
                 height: 50,
                 color: Colors.red,
-                // child: Image.file(_galleryImages[idx],
+
+                // child: Image.file(File(_galleryImages[idx]))
                 // ),
               );
             }),
