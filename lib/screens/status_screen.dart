@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:whatsapp/provider/persons_provider.dart';
 import 'package:whatsapp/widgets/status_item.dart';
 import '../helpers/colors.dart';
 import 'package:configurable_expansion_tile_null_safety/configurable_expansion_tile.dart';
@@ -11,15 +13,12 @@ class StatusScreen extends StatefulWidget {
 }
 
 class _StatusScreenState extends State<StatusScreen> {
-  bool _expanded = false;
-
-  /// should be a list --> if(_mutedList.isNotEmpty)
-  bool _mutedPersonsExist = true;
-
-  ///
-  bool _viewedIsNotEmpty = false;
   @override
   Widget build(BuildContext context) {
+    final persons = Provider.of<PersonsProvider>(context);
+    final personsWithRecentStatus = persons.recentStatus;
+    final personsWithViewedStatus = persons.viewedStatus;
+    final personsWithMutedStatus = persons.mutedStatus;
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -45,22 +44,29 @@ class _StatusScreenState extends State<StatusScreen> {
               subtitle: Text("Tap to add status update"),
             ),
           ),
-          Container(
-            height: 40,
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            width: double.infinity,
-            color: MyColors.whatsapp[700],
-            child: Text(
-              "Recent updates",
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
+          if (personsWithRecentStatus.isNotEmpty)
+            Container(
+              height: 40,
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              width: double.infinity,
+              color: MyColors.whatsapp[700],
+              child: Text(
+                "Recent updates",
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          RecentUpdate(),
-          if (_viewedIsNotEmpty)
+          if (personsWithRecentStatus.isNotEmpty)
+            ListView.builder(
+                padding: EdgeInsets.symmetric(vertical: 0),
+                shrinkWrap: true,
+                itemCount: personsWithRecentStatus.length,
+                itemBuilder: (ctx, idx) =>
+                    StatusItem(personsWithRecentStatus[idx])),
+          if (personsWithViewedStatus.isNotEmpty)
             Container(
               height: 40,
               padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -75,7 +81,13 @@ class _StatusScreenState extends State<StatusScreen> {
                 ),
               ),
             ),
-          if (_mutedPersonsExist)
+          if (personsWithViewedStatus.isNotEmpty)
+            ListView.builder(
+                itemCount: personsWithViewedStatus.length,
+                shrinkWrap: true,
+                itemBuilder: (ctx, idx) =>
+                    StatusItem(personsWithViewedStatus[idx])),
+          if (personsWithMutedStatus.isNotEmpty)
             Container(
               color: MyColors.whatsapp[700],
               child: ConfigurableExpansionTile(
@@ -97,13 +109,12 @@ class _StatusScreenState extends State<StatusScreen> {
                   color: MyColors.whatsapp[300],
                 ),
                 children: [
-                  //
                   ListView.builder(
                       padding: EdgeInsets.symmetric(vertical: 0),
                       shrinkWrap: true,
                       itemCount: 5,
                       itemBuilder: (ctx, idx) {
-                        return StatusItem();
+                        return StatusItem(personsWithMutedStatus[idx]);
                       }),
                 ],
               ),
@@ -116,23 +127,5 @@ class _StatusScreenState extends State<StatusScreen> {
         ],
       ),
     );
-  }
-}
-
-class RecentUpdate extends StatefulWidget {
-  const RecentUpdate({Key? key}) : super(key: key);
-
-  @override
-  _RecentUpdateState createState() => _RecentUpdateState();
-}
-
-class _RecentUpdateState extends State<RecentUpdate> {
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-        padding: EdgeInsets.symmetric(vertical: 0),
-        shrinkWrap: true,
-        itemCount: 3,
-        itemBuilder: (ctx, idx) => StatusItem());
   }
 }

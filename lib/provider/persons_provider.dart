@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:whatsapp/models/person.dart';
+import 'package:whatsapp/models/status_item.dart';
 
 class PersonsProvider with ChangeNotifier {
   List<Person> _persons = [
@@ -8,7 +9,17 @@ class PersonsProvider with ChangeNotifier {
         userName: "Mohamed Yahia",
         userImage:
             "https://i.pinimg.com/originals/f0/02/23/f00223f7c725c86e45d4255f0ad7705b.jpg",
-        userStatus: null),
+        userStatus: [
+          Status(id: 1, images: [
+            "https://i.pinimg.com/originals/f0/02/23/f00223f7c725c86e45d4255f0ad7705b.jpg"
+          ]),
+          Status(id: 1, images: [
+            "https://i.pinimg.com/originals/f0/02/23/f00223f7c725c86e45d4255f0ad7705b.jpg"
+          ]),
+          Status(id: 1, images: [
+            "https://i.pinimg.com/originals/f0/02/23/f00223f7c725c86e45d4255f0ad7705b.jpg"
+          ])
+        ]),
     Person(
         userID: 1,
         userName: "Dazai Osumo",
@@ -19,7 +30,7 @@ class PersonsProvider with ChangeNotifier {
         userID: 1,
         userName: "Naruto-Kun",
         userImage:
-            "https://i.pinimg.com/236x/8f/17/7f/8f177f7b37de2f49f2aebe8599d8de13.jpg",
+            "https://i.pinimg.com/originals/f0/02/23/f00223f7c725c86e45d4255f0ad7705b.jpg",
         userStatus: null),
     Person(
         userID: 1,
@@ -27,6 +38,22 @@ class PersonsProvider with ChangeNotifier {
         userImage:
             "https://i.pinimg.com/236x/4c/75/0b/4c750bc5a124bd0d857289c7abcfc513.jpg",
         userStatus: null),
+    Person(
+        userID: 1,
+        userName: "Khaled Yahia",
+        userImage:
+            "https://i.pinimg.com/236x/4c/75/0b/4c750bc5a124bd0d857289c7abcfc513.jpg",
+        userStatus: [
+          Status(id: 1, images: [
+            "https://i.pinimg.com/236x/4c/75/0b/4c750bc5a124bd0d857289c7abcfc513.jpg"
+          ]),
+          Status(id: 1, images: [
+            "https://i.pinimg.com/236x/4c/75/0b/4c750bc5a124bd0d857289c7abcfc513.jpg"
+          ]),
+          Status(id: 1, images: [
+            "https://i.pinimg.com/236x/4c/75/0b/4c750bc5a124bd0d857289c7abcfc513.jpg"
+          ])
+        ]),
   ];
 
   List<Person> get persons {

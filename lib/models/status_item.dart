@@ -1,4 +1,5 @@
 class Status {
-  late List<String> images;
-  late String dateTime;
+  List<String> images;
+  final int id;
+  Status({required this.id, required this.images});
 }

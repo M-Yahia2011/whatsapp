@@ -4,7 +4,7 @@ class Person {
   late int userID;
   late String userName;
   late String? userImage;
-  Status? userStatus;
+  List<Status>? userStatus;
   bool muteStatus = false;
   Person({
     required this.userID,
