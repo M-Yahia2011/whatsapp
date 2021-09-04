@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: MyColors.whatsapp,
             floatingActionButtonTheme: FloatingActionButtonThemeData(
                 backgroundColor: MyColors.whatsapp[300]),
-           ),
+            textTheme: TextTheme(headline6: TextStyle(color: Colors.white))),
         debugShowCheckedModeBanner: false,
         home: Home(),
         routes: {

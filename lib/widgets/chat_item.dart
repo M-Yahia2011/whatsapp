@@ -12,7 +12,7 @@ class ChatItem extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.of(context)
-            .pushNamed(ChatScreen.routeName, arguments: {person});
+            .pushNamed(ChatScreen.routeName, arguments: {"person":person});
       },
       child: ListTile(
         leading: person.userImage == null
