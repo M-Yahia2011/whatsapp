@@ -5,15 +5,16 @@ class Person {
   late String userName;
   late String? userImage;
   List<Status>? userStatus;
-  bool muteStatus = false;
+  bool muteStatus;
   Person({
     required this.userID,
     required this.userName,
     this.userImage,
     this.userStatus,
+    this.muteStatus=false
   });
 
-  void mutePersonStatus() {
+  void mutePerson() {
     muteStatus = true;
   }
 }

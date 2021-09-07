@@ -13,17 +13,18 @@ class ChatScreen extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as Map<String, Person>;
     final person = personMap['person'];
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         leadingWidth: 85,
         leading: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             InkWell(
-                onTap: () => Navigator.of(context).pop(),
+                // onTap: () => Navigator.of(context).pop(),
                 child: Icon(
-                  Icons.arrow_back,
-                  size: 24,
-                )),
+              Icons.arrow_back,
+              size: 24,
+            )),
             CircleAvatar(
               radius: 24,
               backgroundImage: NetworkImage(
@@ -51,34 +52,34 @@ class ChatScreen extends StatelessWidget {
           IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))
         ],
       ),
-      body: Container(
-    
-        decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage("assets/background.png"), fit: BoxFit.cover),
-        ),
-        child: Stack(children: [
-          ListView(
-            shrinkWrap: true,
-            children: [
-              MyMessageCard(),
-              OtherMessageCard(),
-              MyMessageCard(),
-              OtherMessageCard(),
-              MyMessageCard(),
-              OtherMessageCard(),
-              MyMessageCard(),
-              OtherMessageCard(),
-            ],
+      body: InkWell(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("assets/background.png"), fit: BoxFit.cover),
           ),
-          MessagingBar(),
-        ]),
+          child: Stack(children: [
+            Container(
+              height: MediaQuery.of(context).size.height - 150,
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  MyMessageCard(),
+                  OtherMessageCard(),
+                  MyMessageCard(),
+                  OtherMessageCard(),
+                  MyMessageCard(),
+                  OtherMessageCard(),
+                  MyMessageCard(),
+                  OtherMessageCard(),
+                ],
+              ),
+            ),
+            MessagingBar(),
+          ]),
+        ),
       ),
     );
   }
 }
-
-
-
-
-

@@ -6,7 +6,7 @@ import 'package:whatsapp/screens/chats_screen.dart';
 import 'package:whatsapp/screens/contacts_screen.dart';
 import 'helpers/colors.dart';
 import 'screens/camera_screen.dart';
-import 'screens/chat_screen.dart';
+import 'screens/chat_room_screen.dart';
 import 'screens/save_camera_screen.dart';
 import 'screens/status_screen.dart';
 import 'widgets/tabs.dart';
