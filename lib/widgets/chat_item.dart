@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:whatsapp/models/person.dart';
-import 'package:whatsapp/screens/chat_screen.dart';
+import 'package:whatsapp/screens/chat_room_screen.dart';
 import '../helpers/colors.dart';
 import 'package:intl/intl.dart' as intl;
 
@@ -12,7 +12,7 @@ class ChatItem extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.of(context)
-            .pushNamed(ChatScreen.routeName, arguments: {"person":person});
+            .pushNamed(ChatScreen.routeName, arguments: {"person": person});
       },
       child: ListTile(
         leading: person.userImage == null
@@ -35,14 +35,44 @@ class ChatItem extends StatelessWidget {
                       person.userImage!,
                     )),
               ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        title: Text(person.userName,
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        trailing: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(person.userName,
-                style: TextStyle(fontWeight: FontWeight.bold)),
             Text(
               intl.DateFormat.jm().format(DateTime.now()),
               style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            ),
+            Expanded(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  person.muteStatus
+                      ? Icon(
+                          Icons.volume_off,
+                          size: 22,
+                        )
+                      : SizedBox(),
+                  Container(
+                    width: 20,
+                    height: 20,
+                    margin: EdgeInsets.symmetric(horizontal: 5),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        color: MyColors.whatsapp[300], shape: BoxShape.circle),
+                    child: Text(
+                      "1",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

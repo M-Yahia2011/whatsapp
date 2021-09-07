@@ -18,8 +18,9 @@ class PersonsProvider with ChangeNotifier {
           ]),
           Status(id: 1, images: [
             "https://i.pinimg.com/originals/f0/02/23/f00223f7c725c86e45d4255f0ad7705b.jpg"
-          ])
-        ]),
+          ]),
+        ],
+        muteStatus: true),
     Person(
         userID: 1,
         userName: "Dazai Osumo",
@@ -31,7 +32,8 @@ class PersonsProvider with ChangeNotifier {
         userName: "Naruto-Kun",
         userImage:
             "https://i.pinimg.com/originals/f0/02/23/f00223f7c725c86e45d4255f0ad7705b.jpg",
-        userStatus: null),
+        userStatus: null,
+        muteStatus: true),
     Person(
         userID: 1,
         userName: "Khaled Yahia",
